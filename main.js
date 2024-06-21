@@ -10,9 +10,14 @@ if (!accountSid || !authToken) {
 
 const client = require("twilio")(accountSid, authToken);
 
-client.messages
-  .list({ limit: 20 })
-  .then((messages) => {
-    messages.forEach((m) => console.log(m.body));
-  })
-  .catch((err) => console.error(err));
+async function deleteAllMessages() {
+  const messages = await client.messages.list();
+  for (const message of messages) {
+    console.warn(`Would have deleted ${message.sid}`);
+    message.remove();
+  }
+}
+
+deleteAllMessages()
+  .then(() => console.log("DONE"))
+  .catch((err) => console.error());
